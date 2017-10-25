@@ -4,9 +4,9 @@
 *
 *  TITLE:       APPINFO.C
 *
-*  VERSION:     1.22
+*  VERSION:     1.26
 *
-*  DATE:        11 Mar 2017
+*  DATE:        04 Oct 2017
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -37,7 +37,7 @@ UAC_PATTERN g_MmcPatterns[SUPPORTED_PATTERNS_COUNT] = {
     { ptMmcBlock_9200, sizeof(ptMmcBlock_9200), 9200, 9200 },
     { ptMmcBlock_9600, sizeof(ptMmcBlock_9600), 9600, 9600 },
     { ptMmcBlock_10240, sizeof(ptMmcBlock_10240), 10240, 10240 },
-    { ptMmcBlock_10586_15055, sizeof(ptMmcBlock_10586_15055), 10586, 15055 }
+    { ptMmcBlock_10586_16299, sizeof(ptMmcBlock_10586_16299), 10586, 16299 }
 };
 
 #define TestChar(x)  ((x >= L'A') && (x <= L'z')) 
@@ -115,37 +115,38 @@ BOOL InitDbgHelp(
 
         szBuffer[length] = 0;
         _strcat(szBuffer, L"symsrv.dll");
-        LoadLibrary(szBuffer);
+        if (LoadLibrary(szBuffer)) {
 
-        pSymSetOptions = (pfnSymSetOptions)GetProcAddress(hDbgHelp, "SymSetOptions");
-        if (pSymSetOptions == NULL)
-            break;
+            pSymSetOptions = (pfnSymSetOptions)GetProcAddress(hDbgHelp, "SymSetOptions");
+            if (pSymSetOptions == NULL)
+                break;
 
-        pSymInitializeW = (pfnSymInitializeW)GetProcAddress(hDbgHelp, "SymInitializeW");
-        if (pSymInitializeW == NULL)
-            break;
+            pSymInitializeW = (pfnSymInitializeW)GetProcAddress(hDbgHelp, "SymInitializeW");
+            if (pSymInitializeW == NULL)
+                break;
 
-        pSymLoadModuleExW = (pfnSymLoadModuleExW)GetProcAddress(hDbgHelp, "SymLoadModuleExW");
-        if (pSymLoadModuleExW == NULL)
-            break;
+            pSymLoadModuleExW = (pfnSymLoadModuleExW)GetProcAddress(hDbgHelp, "SymLoadModuleExW");
+            if (pSymLoadModuleExW == NULL)
+                break;
 
-        pSymEnumSymbolsW = (pfnSymEnumSymbolsW)GetProcAddress(hDbgHelp, "SymEnumSymbolsW");
-        if (pSymEnumSymbolsW == NULL)
-            break;
+            pSymEnumSymbolsW = (pfnSymEnumSymbolsW)GetProcAddress(hDbgHelp, "SymEnumSymbolsW");
+            if (pSymEnumSymbolsW == NULL)
+                break;
 
-        pSymUnloadModule64 = (pfnSymUnloadModule64)GetProcAddress(hDbgHelp, "SymUnloadModule64");
-        if (pSymUnloadModule64 == NULL)
-            break;
+            pSymUnloadModule64 = (pfnSymUnloadModule64)GetProcAddress(hDbgHelp, "SymUnloadModule64");
+            if (pSymUnloadModule64 == NULL)
+                break;
 
-        pSymFromAddrW = (pfnSymFromAddrW)GetProcAddress(hDbgHelp, "SymFromAddrW");
-        if (pSymFromAddrW == NULL)
-            break;
+            pSymFromAddrW = (pfnSymFromAddrW)GetProcAddress(hDbgHelp, "SymFromAddrW");
+            if (pSymFromAddrW == NULL)
+                break;
 
-        pSymCleanup = (pfnSymCleanup)GetProcAddress(hDbgHelp, "SymCleanup");
-        if (pSymCleanup == NULL)
-            break;
+            pSymCleanup = (pfnSymCleanup)GetProcAddress(hDbgHelp, "SymCleanup");
+            if (pSymCleanup == NULL)
+                break;
 
-        bResult = TRUE;
+            bResult = TRUE;
+        }
 
     } while (bCond);
 
@@ -177,20 +178,20 @@ VOID SymbolAddToList(
     sz += sizeof(WCHAR);
 
     Entry->Next = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(SYMBOL_ENTRY));
-    if (Entry->Next == NULL)
-        return;
+    if (Entry->Next) {
 
-    Entry = Entry->Next;
-    Entry->Next = NULL;
+        Entry = Entry->Next;
+        Entry->Next = NULL;
 
-    Entry->Name = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sz);
-    if (Entry->Name == NULL) {
-        HeapFree(GetProcessHeap(), 0, Entry->Next);
-        return;
+        Entry->Name = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sz);
+        if (Entry->Name) {
+
+            _strncpy(Entry->Name, sz / sizeof(WCHAR),
+                SymbolName, sz / sizeof(WCHAR));
+
+            Entry->Address = lpAddress;
+        }
     }
-
-    _strncpy(Entry->Name, sz / sizeof(WCHAR), SymbolName, sz / sizeof(WCHAR));
-    Entry->Address = lpAddress;
 }
 
 /*
@@ -410,8 +411,7 @@ VOID ListMMCFiles(
     APPINFODATACALLBACK OutputCallback
     )
 {
-    ULONG           i;
-    SIZE_T          Length;
+    SIZE_T          i, Length;
     LPWSTR          TestString = NULL;
     PVOID          *MscArray = NULL;
     UAC_AI_DATA     CallbackData;
@@ -472,8 +472,7 @@ VOID ListAutoApproveEXE(
     )
 {
     WCHAR           k, lk;
-    ULONG           i;
-    SIZE_T          Length = 0;
+    SIZE_T          i, Length = 0;
     LPWSTR          TestString = NULL;
     UAC_AI_DATA     CallbackData;
 
@@ -531,8 +530,7 @@ VOID ListStringDataUnsorted(
     APPINFODATACALLBACK OutputCallback
     )
 {
-    ULONG           i;
-    SIZE_T          Length = 0;
+    SIZE_T          i, Length = 0;
     LPWSTR          TestString = NULL;
     UAC_AI_DATA     CallbackData;
 

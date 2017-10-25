@@ -4,9 +4,9 @@
 *
 *  TITLE:       MAIN.C
 *
-*  VERSION:     1.21
+*  VERSION:     1.25
 *
-*  DATE:        07 Mar 2017
+*  DATE:        07 May 2017
 *
 *  Program entry point.
 *
@@ -201,7 +201,7 @@ VOID WINAPI FusionOutputCallback(
         //
         // Display only binaries with autoelevation flags if not in verbose output
         //
-        if ((Data->AutoElevateState == AutoElevateUnspecified) && (g_VerboseOutput != TRUE)) 
+        if ((Data->AutoElevateState == AutoElevateUnspecified) && (g_VerboseOutput == FALSE)) 
             return;
 
         //
@@ -214,8 +214,8 @@ VOID WINAPI FusionOutputCallback(
         //
         // If application has autoElevate attribute, report full info
         //
-        if (Data->IsFusion) {
-            switch (Data->RunLevel) {
+        if (Data->IsFusion) {           
+            switch (Data->RunLevel.RunLevel) {
             case ACTCTX_RUN_LEVEL_AS_INVOKER:
                 lpText = TEXT("asInvoker");
                 break;
@@ -231,6 +231,15 @@ VOID WINAPI FusionOutputCallback(
                 break;
             }
             //RequestedExecutionLevel 
+            LoggerWrite(g_LogFile, lpText, TRUE);
+           
+            if (Data->RunLevel.UiAccess > 0) {
+                lpText = TEXT("uiAccess=TRUE");
+            }
+            else {
+                lpText = TEXT("uiAccess=FALSE");
+            }
+            //UIAccess state
             LoggerWrite(g_LogFile, lpText, TRUE);
 
             //autoElevate state
@@ -253,7 +262,7 @@ VOID WINAPI FusionOutputCallback(
             lpText = TEXT("Binary without embedded manifest");
             LoggerWrite(g_LogFile, lpText, TRUE);
             if (Data->IsOSBinary) {
-                if (Data->IsSignatureValidOrTrusted != TRUE) {
+                if (Data->IsSignatureValidOrTrusted == FALSE) {
                     lpText = TEXT("Warning: signature not valid or trusted");
                     LoggerWrite(g_LogFile, lpText, TRUE);
                 }
@@ -437,9 +446,11 @@ VOID main()
             cuiPrintText(g_ConOut, szBuffer, TRUE, TRUE);
         }
 
+#ifndef _DEBUG
         ListBasicSettings();
         ListCOMFromRegistry();
         ListAppInfo();
+#endif
         ListFusion();
 
         if (g_LogFile != INVALID_HANDLE_VALUE)

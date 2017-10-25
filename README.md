@@ -3,7 +3,7 @@
 
 # System Requirements
 
-* x86-32/x64 Windows 7/8/8.1/10TH1/10TH2/10RS1/10RS2 (client, some methods however works on server version too).
+* x86-32/x64 Windows 7/8/8.1/10(TH1/TH2/RS1/RS2/RS3/RS4) (client, some methods however works on server version too).
 * Admin account with UAC set on default settings required.
 
 # Usage
@@ -36,7 +36,7 @@ Keys (watch debug output with dbgview or similar for more info):
    * Target(s): \system32\oobe\setupsqm.exe
    * Component(s): WdsCore.dll
    * Works from: Windows 7 (7600)
-   * Fixed in: Windows 10 TH1 (10558)
+   * Fixed in: Windows 10 TH2 (10558)
       * How: side effect of OOBE redesign
 4. Author: Jon Ericson, WinNT/Gootkit, mzH
    * Type: AppCompat
@@ -45,7 +45,7 @@ Keys (watch debug output with dbgview or similar for more info):
    * Component(s): -
    * Works from: Windows 7 (7600)
    * Fixed in: Windows 10 TP (> 9600)
-      * How: Sbdinst.exe autoelevation removed, KB3045645/KB3048097 for rest Windows versions
+      * How: Sdbinst.exe autoelevation removed, KB3045645/KB3048097 for rest Windows versions
 5. Author: WinNT/Simda
    * Type: Elevated COM interface
    * Method: ISecurityEditor
@@ -101,7 +101,7 @@ Keys (watch debug output with dbgview or similar for more info):
       * Component(s): Attacker prepared shellcode
       * Works from: Windows 7 (7600)
       * Fixed in: Windows 8.1 (9600)
-         * How: Sbdinst.exe autoelevation removed, KB3045645/KB3048097 for rest Windows versions
+         * How: Sdbinst.exe autoelevation removed, KB3045645/KB3048097 for rest Windows versions
 12. Author: Leo Davidson derivative
       * Type: Dll Hijack
       * Method: IFileOperation
@@ -147,7 +147,7 @@ Keys (watch debug output with dbgview or similar for more info):
      * Method: IFileOperation
      * Target(s): \system32\sysprep\sysprep.exe
      * Component(s): unbcl.dll
-     * Works from: Windows 7 (7600)
+     * Works from: Windows 8.1 (9600)
      * Fixed in: Windows 10 RS1 (14371)
         * How: sysprep.exe manifest updated
 18. Author: Leo Davidson derivative
@@ -165,23 +165,23 @@ Keys (watch debug output with dbgview or similar for more info):
      * Component(s): MsCoree.dll
      * Works from: Windows 7 (7600)
      * Fixed in: Windows 10 RS1 (14376)
-        * How: inetmgr.exe executable manifest hardening
+        * How: inetmgr.exe executable manifest hardening, MitigationPolicy->ProcessImageLoadPolicy->PreferSystem32Images
 20. Author: Leo Davidson derivative
      * Type: Dll Hijack
      * Method: IFileOperation
      * Target(s): \system32\mmc.exe, Rsop.msc
      * Component(s): WbemComn.dll
      * Works from: Windows 7 (7600)
-     * Fixed in: unfixed :see_no_evil:
-        * How: -
+     * Fixed in: Windows 10 RS3 (16232)
+        * How: Target requires wbemcomn.dll to be signed by MS
 21. Author: Leo Davidson derivative
      * Type: Dll Hijack
      * Method: IFileOperation, SxS DotLocal
      * Target(s): \system32\sysprep\sysprep.exe
      * Component(s): comctl32.dll
      * Works from: Windows 7 (7600)
-     * Fixed in: unfixed :see_no_evil:
-        * How: -
+     * Fixed in: Windows 10 RS3 (16232)
+        * How: sysprep.exe requires MS signed modules to load
 22. Author: Leo Davidson derivative
      * Type: Dll Hijack
      * Method: IFileOperation, SxS DotLocal
@@ -220,6 +220,7 @@ Keys (watch debug output with dbgview or similar for more info):
      * Target(s): %temp%\GUID\dismhost.exe
      * Component(s): LogProvider.dll
      * Works from: Windows 10 TH1 (10240)
+     * AlwaysNotify compatible
      * Fixed in: Windows 10 RS2 (15031)
         * How: File security permissions altered
 27. Author: ExpLife
@@ -228,8 +229,8 @@ Keys (watch debug output with dbgview or similar for more info):
      * Target(s): Attacker defined application
      * Component(s): Attacker defined components
      * Works from: Windows 7 (7600)
-     * Fixed in: unfixed :see_no_evil:
-        * How: -
+     * Fixed in: Windows 10 RS3 (16199)
+        * How: UninstallStringLauncher interface removed from COMAutoApprovalList
 28. Author: Exploit/Sandworm
      * Type: Whitelisted component
      * Method: InfDefaultInstall
@@ -238,14 +239,122 @@ Keys (watch debug output with dbgview or similar for more info):
      * Works from: Windows 7 (7600)
      * Fixed in: Windows 8.1 (9600)
         * How: InfDefaultInstall.exe removed from g_lpAutoApproveEXEList (MS14-060)
+29. Author: Enigma0x3
+     * Type: Shell API
+     * Method: Registry key manipulation
+     * Target(s): \system32\sdctl.exe
+     * Component(s): Attacker defined application
+     * Works from: Windows 10 TH1 (10240)
+     * Fixed in: Windows 10 RS3 (16215)
+        * How: Shell API update
+30. Author: Leo Davidson derivative, lhc645
+     * Type: Dll Hijack
+     * Method: WOW64 logger
+     * Target(s): \syswow64\\{any elevated exe, e.g wusa.exe}
+     * Component(s): wow64log.dll
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+31. Author: Enigma0x3
+     * Type: Shell API
+     * Method: Registry key manipulation
+     * Target(s): \system32\sdctl.exe
+     * Component(s): Attacker defined application
+     * Works from: Windows 10 TH1 (10240)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+32. Author: xi-tauw
+     * Type: Dll Hijack 
+     * Method: UIPI bypass with uiAccess application
+     * Target(s): \Program Files\Windows Media Player\osk.exe, \system32\EventVwr.exe, \system32\mmc.exe
+     * Component(s): duser.dll, osksupport.dll
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+33. Author: winscripting.blog
+     * Type: Shell API 
+     * Method: Registry key manipulation
+     * Target(s): \system32\fodhelper.exe
+     * Component(s): Attacker defined application
+     * Works from: Windows 10 TH1 (10240)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+34. Author: James Forshaw
+     * Type: Shell API 
+     * Method: Environment variables expansion
+     * Target(s): \system32\svchost.exe via \system32\schtasks.exe
+     * Component(s): Attacker defined application
+     * Works from: Windows 8.1 (9600)
+     * AlwaysNotify compatible
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+35. Author: CIA & James Forshaw
+     * Type: Impersonation
+     * Method: Token Manipulations
+     * Target(s): Autoelevated applications
+     * Component(s): Attacker defined applications
+     * Works from: Windows 7 (7600)
+     * AlwaysNotify compatible, see note
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+36. Author: Thomas Vanhoutte
+     * Type: Race condition
+     * Method: NTFS reparse point & Dll Hijack
+     * Target(s): wusa.exe
+     * Component(s): dcomcnfg.exe, mmc.exe, ole32.dll, MsCoree.dll
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+37. Author: Ernesto Fernandez, Thomas Vanhoutte
+     * Type: Dll Hijack
+     * Method: SxS DotLocal, NTFS reparse point
+     * Target(s): \system32\dccw.exe
+     * Component(s): GdiPlus.dll
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+38. Author: Clement Rouault
+     * Type: Whitelisted component
+     * Method: APPINFO command line spoofing
+     * Target(s): \system32\mmc.exe
+     * Component(s): Attacker defined components
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+39. Author: Stefan Kanthak
+     * Type: Dll Hijack
+     * Method: .NET Code Profiler
+     * Target(s): \system32\mmc.exe
+     * Component(s): Attacker defined components
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+40. Author: Ruben Boonen
+     * Type: COM Handler hijack
+     * Method: Registry key manipulation
+     * Target(s): \system32\mmc.exe, \System32\recdisc.exe
+     * Component(s): Attacker defined components
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
+41. Author: Oddvar Moe
+     * Type: Elevated COM interface
+     * Method: ICMLuaUtil
+     * Target(s): Attacker defined
+     * Component(s): Attacker defined
+     * Works from: Windows 7 (7600)
+     * Fixed in: unfixed :see_no_evil:
+        * How: -
 
 Note:
-* Several methods require process injection, so they won't work from wow64, use x64 edition of this tool;
-* Method (4) unavailable in 64 bit edition because of Shim restriction;
 * Method (6) unavailable in wow64 environment starting from Windows 8;
 * Method (11) implemented in x86-32 version;
-* Method (13) (19) and above implemented only in x64 version;
-* Method (26) is still working, however it main advantage was UAC bypass on AlwaysNotify level. Since 15031 it is gone.
+* Method (13) (19) (38) implemented only in x64 version;
+* Method (14) require process injection, wow64 unsupported, use x64 version of this tool;
+* Method (26) is still working, however it main advantage was UAC bypass on AlwaysNotify level. Since 15031 it is gone;
+* Method (30) require x64 because it abuses WOW64 subsystem feature;
+* Method (35) AlwaysNotify compatible as there always will be running autoelevated apps or user will have to launch them anyway;
+* Method (38) require internet connection as it executes remote script located at github.com/hfiref0x/Beacon/blob/master/uac/exec.html.
 
 Run examples:
 * akagi32.exe 1
@@ -267,7 +376,6 @@ https://blogs.msdn.microsoft.com/oldnewthing/20160816-00/?p=94105
 
 
 # Protection
-* UAC turned on maximum level and full awareness about every window it will show;
 * Account without administrative privileges.
 
 # Malware usage
@@ -293,7 +401,21 @@ https://blogs.msdn.microsoft.com/oldnewthing/20160816-00/?p=94105
 * "Fileless" UAC Bypass Using eventvwr.exe and Registry Hijacking, https://enigma0x3.net/2016/08/15/fileless-uac-bypass-using-eventvwr-exe-and-registry-hijacking/
 * Bypassing UAC on Windows 10 using Disk Cleanup, https://enigma0x3.net/2016/07/22/bypassing-uac-on-windows-10-using-disk-cleanup/
 * Using IARPUninstallStringLauncher COM interface to bypass UAC, http://www.freebuf.com/articles/system/116611.html
- 
+* Bypassing UAC using App Paths, https://enigma0x3.net/2017/03/14/bypassing-uac-using-app-paths/
+* "Fileless" UAC Bypass using sdclt.exe, https://enigma0x3.net/2017/03/17/fileless-uac-bypass-using-sdclt-exe/
+* UAC Bypass or story about three escalations, https://habrahabr.ru/company/pm/blog/328008/
+* Exploiting Environment Variables in Scheduled Tasks for UAC Bypass, https://tyranidslair.blogspot.ru/2017/05/exploiting-environment-variables-in.html
+* First entry: Welcome and fileless UAC bypass, https://winscripting.blog/2017/05/12/first-entry-welcome-and-uac-bypass/
+* Reading Your Way Around UAC in 3 parts:
+   1. https://tyranidslair.blogspot.ru/2017/05/reading-your-way-around-uac-part-1.html
+   2. https://tyranidslair.blogspot.ru/2017/05/reading-your-way-around-uac-part-2.html
+   3. https://tyranidslair.blogspot.ru/2017/05/reading-your-way-around-uac-part-3.html 
+* Research on CMSTP.exe, https://msitpros.com/?p=3960
+
 # Authors
 
 (c) 2014 - 2017 UACMe Project
+
+# 3rd party components usage
+
+MinHook - The Minimalistic x86/x64 API Hooking Library for Windows, https://github.com/TsudaKageyu/minhook

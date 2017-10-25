@@ -4,9 +4,9 @@
 *
 *  TITLE:       TEST.H
 *
-*  VERSION:     2.57
+*  VERSION:     2.79
 *
-*  DATE:        28 Feb 2017
+*  DATE:        16 Aug 2017
 *
 *  Test unit header file.
 *
@@ -91,5 +91,6 @@ interface ITestInterface
     CONST_VTBL struct ITestInterfaceVtbl *lpVtbl;
 };
 
-
-VOID UACMeTest();
+BOOL ucmTestRoutine(
+    _In_opt_ PVOID PayloadCode, 
+    _In_opt_ ULONG PayloadSize);
